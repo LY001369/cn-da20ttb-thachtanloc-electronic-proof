@@ -5,6 +5,8 @@ class Table_Img():
     def __init__(self, image_path):
         self.img = cv2.imread(image_path)
         self.preprocess()
+        self.horizontal_lines = []
+        self.vertical_lines = []
 
     def preprocess(self):
         #chuyển sang ảnh xám
@@ -37,12 +39,7 @@ class Table_Img():
             for line in slines:
                 lis.append(line[0][k-1])
                 lis.append(line[0][k+1])
-            x_min, x_max = min(lis) - int(5*thin_thresh), max(lis) + int(5*thin_thresh)
-            
-            line = [0,0,0,0]
-            line[k] = line[k-2] = thresh[k]
-            line[k-1], line[k+1] =x_min, x_max
-            new_lines.append(line)
+            new_lines.append([min(lis) - 4*thin_thresh, max(lis) + 4*thin_thresh, thresh[k]])
         return new_lines
 
     def find_horizontal_lines(self):
@@ -59,3 +56,16 @@ class Table_Img():
         self.vertical_lines = self._group_lines(v_lines, kernel_len, 2)
         return self.vertical_lines
 
+    def find_point_intersect(self):
+        if self.horizontal_lines == []:
+            self.find_horizontal_lines()
+        if self.vertical_lines == []:
+            self.find_vertical_lines()
+       
+        points = []   
+        for h_line in self.horizontal_lines:
+            for v_line in self.vertical_lines:
+                if (h_line[0] <= v_line[2] <= h_line[1]) and (v_line[0] <= h_line[2] <= v_line[1]):
+                    points.append([v_line[2], h_line[2]])
+        self.points = points
+        return points

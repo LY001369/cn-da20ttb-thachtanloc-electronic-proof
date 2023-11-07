@@ -6,6 +6,6 @@ path = [
     "img-test/2.png"
 ]
 
-img = Table_Img(os.path.abspath(path[0]))
-print(img.find_vertical_lines())
+img = Table_Img(os.path.abspath(path[1]))
+print(img.find_point_intersect())
 
