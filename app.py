@@ -7,5 +7,9 @@ path = [
 ]
 
 img = Table_Img(os.path.abspath(path[0]))
-print(img.img_gray.shape)
+img.cut_cell()
+
+x, y = 5, 1
+cv2.imshow(f"ô {x};{y}", img.cells[x][y])
+cv2.waitKey()
 
