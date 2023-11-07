@@ -8,6 +8,7 @@ class Table_Img():
         self.horizontal_lines = []
         self.vertical_lines = []
 
+    # Xử lý ảnh tạo ảnh xám và ảnh nhịn phân
     def preprocess(self):
         #chuyển sang ảnh xám
         self.img_gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
@@ -18,6 +19,7 @@ class Table_Img():
 
         return self.img_gray, self.img_bin
 
+    #Xác địch các vector đường thẳng.
     def _lines(self, k):
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, k)
         image = cv2.erode(self.img_bin, kernel, iterations=3)
@@ -50,22 +52,30 @@ class Table_Img():
         return self.horizontal_lines
     
     def find_vertical_lines(self):
-        kernel_len = self.img_gray.shape[1]//100
+        kernel_len = self.img_gray.shape[0]//100
         v_lines = self._lines((1, kernel_len))
 
         self.vertical_lines = self._group_lines(v_lines, kernel_len, 2)
         return self.vertical_lines
 
-    def find_point_intersect(self):
+    def cut_cell(self):
         if self.horizontal_lines == []:
             self.find_horizontal_lines()
         if self.vertical_lines == []:
             self.find_vertical_lines()
        
-        points = []   
-        for h_line in self.horizontal_lines:
-            for v_line in self.vertical_lines:
-                if (h_line[0] <= v_line[2] <= h_line[1]) and (v_line[0] <= h_line[2] <= v_line[1]):
-                    points.append([v_line[2], h_line[2]])
-        self.points = points
-        return points
+        cells = []
+        for i in range(len(self.horizontal_lines)):
+            cells.append([])
+            for j in range(len(self.vertical_lines)):
+                x1 = self.find_vertical_lines[i][2]
+                y1 = self.horizontal_lines[i][2]  
+
+                x2 = self.find_vertical_lines[i+1][2]
+                y2 = self.horizontal_lines[i+1][2]  
+
+                img = self.img_bin[x1:x2, y1:y2]
+                cells[-1].append(img)             
+        
+        self.cells = cells
+        return cells

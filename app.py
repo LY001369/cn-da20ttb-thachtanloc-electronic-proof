@@ -6,6 +6,6 @@ path = [
     "img-test/2.png"
 ]
 
-img = Table_Img(os.path.abspath(path[1]))
-print(img.find_point_intersect())
+img = Table_Img(os.path.abspath(path[0]))
+print(img.img_gray.shape)
 
