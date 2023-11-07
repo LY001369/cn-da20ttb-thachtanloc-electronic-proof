@@ -7,5 +7,5 @@ path = [
 ]
 
 img = Table_Img(os.path.abspath(path[0]))
-print(img.find_horizontal_lines())
 print(img.find_vertical_lines())
+
