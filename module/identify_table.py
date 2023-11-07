@@ -68,13 +68,13 @@ class Table_Img():
         for i in range(len(self.horizontal_lines)-1):
             cells.append([])
             for j in range(len(self.vertical_lines)-1):
-                x1 = self.vertical_lines[j][2]
-                y1 = self.horizontal_lines[i][2]  
+                x1 = self.horizontal_lines[i][2]  
+                y1 = self.vertical_lines[j][2]
 
-                x2 = self.vertical_lines[j+1][2]
-                y2 = self.horizontal_lines[i+1][2]  
+                x2 = self.horizontal_lines[i+1][2]
+                y2 = self.vertical_lines[j+1][2] 
 
-                img = self.img_bin[y1:y2, x1:x2]
+                img = self.img_bin[x1:x2, y1:y2]
                 cells[-1].append(img)             
         
         self.cells = cells
