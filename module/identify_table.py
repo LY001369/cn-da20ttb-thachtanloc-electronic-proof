@@ -16,34 +16,60 @@ class Table_Img():
 
         return self.img_gray, self.img_bin
 
-    def _h_lines(self):
-        kernel_len = self.img_gray.shape[1]//120
-        hor_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_len, 1))
-        image_horizontal = cv2.erode(self.img_bin, hor_kernel, iterations=3)
-        horizontal_lines = cv2.dilate(image_horizontal, hor_kernel, iterations=3)
+    def _lines(self, k):
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, k)
+        image = cv2.erode(self.img_bin, kernel, iterations=3)
+        lines = cv2.dilate(image, kernel, iterations=3)
 
-        h_lines = cv2.HoughLinesP(horizontal_lines, 1, np.pi/180, 30, maxLineGap=250)
-        return h_lines, kernel_len
-    
+        lines = cv2.HoughLinesP(lines, 1, np.pi/180, 30, maxLineGap=250)
+        return lines
+
+
     def _group_h_lines(self, h_lines, thin_thresh):
         new_h_lines = []
-
         while len(h_lines) > 0:
             thresh = sorted(h_lines, key=lambda x: x[0][1])[0][0]
-            lines = [line for line in h_lines if thresh[1] - thin_thresh <= line[0][1] <= thresh[1] + thin_thresh]
-            h_lines = [line for line in h_lines if thresh[1] - thin_thresh > line[0][1] or line[0][1] > thresh[1] + thin_thresh]
-            
+            lines = [line for line in h_lines if thresh[1] -
+                    thin_thresh <= line[0][1] <= thresh[1] + thin_thresh]
+            h_lines = [line for line in h_lines if thresh[1] - thin_thresh >
+                    line[0][1] or line[0][1] > thresh[1] + thin_thresh]
             x = []
             for line in lines:
                 x.append(line[0][0])
                 x.append(line[0][2])
-
             x_min, x_max = min(x) - int(5*thin_thresh), max(x) + int(5*thin_thresh)
             new_h_lines.append([x_min, thresh[1], x_max, thresh[1]])
-
         return new_h_lines
     
-    def horizontal_lines(self):
-        h_lines, kernel_len = self._h_lines()
+    def _group_v_lines(self, v_lines, thin_thresh):
+        new_v_lines = []
+        while len(v_lines) > 0:
+            thresh = sorted(v_lines, key=lambda x: x[0][0])[0][0]
+            lines = [line for line in v_lines if thresh[0] -
+                    thin_thresh <= line[0][0] <= thresh[0] + thin_thresh]
+            v_lines = [line for line in v_lines if thresh[0] - thin_thresh >
+                    line[0][0] or line[0][0] > thresh[0] + thin_thresh]
+            y = []
+            for line in lines:
+                y.append(line[0][1])
+                y.append(line[0][3])
+            y_min, y_max = min(y) - int(4*thin_thresh), max(y) + int(4*thin_thresh)
+            new_v_lines.append([thresh[0], y_min, thresh[0], y_max])
+        return new_v_lines
+    
+
+
+    def find_horizontal_lines(self):
+        kernel_len = self.img_gray.shape[1]//120
+        h_lines = self._lines((kernel_len, 1))
+
         self.horizontal_lines = self._group_h_lines(h_lines, kernel_len)
         return self.horizontal_lines
+    
+    def find_vertical_lines(self):
+        kernel_len = self.img_gray.shape[1]//120
+        v_lines = self._lines((1, kernel_len))
+
+        self.vertical_lines = self._group_v_lines(v_lines, kernel_len)
+        return self.vertical_lines
+
