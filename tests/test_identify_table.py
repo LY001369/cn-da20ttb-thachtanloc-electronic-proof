@@ -1,15 +1,15 @@
+dirtest = "data\\test_identify_table" # <===========================
+
+
+#=======================================================
 import sys, os, shutil
 path = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(path)
 
 #========================================================
-
-input_path = os.path.join(path, 'data\\input')
-output_path = os.path.join(path, 'data\\output')
-
+input_path = os.path.join(path, dirtest, 'input')
+output_path = os.path.join(path, dirtest,'output')
 #=======================================================
-
-
 
 from module.identify_table import Table_Img
 import cv2
@@ -28,15 +28,9 @@ for img_path in list_img_path:
     v_line = img.find_vertical_lines()
     
     image = img.img
-    color = (255, 0, 0)
-    
-    for h in h_line:
-        A = (h[0], h[2])
-        B = (h[1], h[2])
-        cv2.line(image, A, B, color, 1)
-    for v in v_line:
-        A = (v[2], v[0])
-        B = (v[2], v[1])
-        cv2.line(image, A, B, color, 1)
+    color = (0, 0, 255)
+    cells,_ = img.cut_cell()
+    for cell in cells:
+        cv2.rectangle(image, cell[0], cell[1], color, 2)
     cv2.imwrite(os.path.join(output_path,  os.path.basename(img_path)), image)
 print("DONE")
