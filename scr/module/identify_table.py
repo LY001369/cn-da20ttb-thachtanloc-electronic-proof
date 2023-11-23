@@ -58,7 +58,7 @@ class Table_Img():
         self.vertical_lines = self._group_lines(v_lines, kernel_len, 2)
         return self.vertical_lines
 
-    def cut_cell(self):
+    def find_cell(self):
         if self.horizontal_lines == []:
             self.find_horizontal_lines()
         if self.vertical_lines == []:
@@ -70,12 +70,14 @@ class Table_Img():
             for j in range(len(self.vertical_lines)-1):
                 x1 = self.vertical_lines[j][2]
                 y1 = self.horizontal_lines[i][2]  
-
                 x2 = self.vertical_lines[j+1][2] 
                 y2 = self.horizontal_lines[i+1][2]
  
-                cells[-1].append([[x1, y1], [x2, y2]])         
+                cells[-1].append([[x1, y1, x2, y2]])         
         
         self.cells = cells
         return cells
     
+    def cut_img(self, x, y):
+        x1, y1, x2, y2 = self.cells[x][y]
+        return self.img[y1:y2, x1:x2]
