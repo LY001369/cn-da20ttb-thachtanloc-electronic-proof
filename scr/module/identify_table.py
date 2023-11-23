@@ -64,23 +64,18 @@ class Table_Img():
         if self.vertical_lines == []:
             self.find_vertical_lines()
        
-        img_cells = []
         cells = []
         for i in range(len(self.horizontal_lines)-1):
-            img_cells.append([])
+            cells.append([])
             for j in range(len(self.vertical_lines)-1):
                 x1 = self.vertical_lines[j][2]
                 y1 = self.horizontal_lines[i][2]  
 
                 x2 = self.vertical_lines[j+1][2] 
                 y2 = self.horizontal_lines[i+1][2]
-
-
-                img = self.img_bin[y1:y2, x1:x2]
-                img_cells[-1].append(img)    
-                cells.append([[x1, y1], [x2, y2]])         
+ 
+                cells[-1].append([[x1, y1], [x2, y2]])         
         
-        self.img_cells = img_cells
         self.cells = cells
-        return cells, img_cells
+        return cells
     
