@@ -3,7 +3,7 @@ import numpy as np
 
 class Table_Img():
     def __init__(self, image_path):
-        self.img = cv2.imread(image_path)
+        self.img = cv2.imread(image_path, 0)
         self.preprocess()
         self.horizontal_lines = []
         self.vertical_lines = []
@@ -11,13 +11,13 @@ class Table_Img():
     # Xử lý ảnh tạo ảnh xám và ảnh nhịn phân
     def preprocess(self):
         #chuyển sang ảnh xám
-        self.img_gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+
     
         #chuyển sang ảnh nhị phân
-        thresh, img_bin = cv2.threshold(self.img_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-        self.img_bin = 255-img_bin
+        thresh, img_bin = cv2.threshold(self.img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+        self.img_bin = img_bin
 
-        return self.img_gray, self.img_bin
+        return self.img_bin
 
     #Xác địch các vector đường thẳng.
     def _lines(self, k):
@@ -45,7 +45,7 @@ class Table_Img():
         return new_lines
 
     def find_horizontal_lines(self):
-        kernel_len = self.img_gray.shape[1]//120
+        kernel_len = self.img.shape[1]//120
         h_lines = self._lines((kernel_len, 1))
 
         self.horizontal_lines = self._group_lines(h_lines, kernel_len, 1)
