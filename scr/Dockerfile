@@ -1,5 +1,5 @@
 # Sử dụng image Python chính thức làm base image
-FROM python:3.9
+FROM python:3.10
 
 # Thiết lập thư mục làm việc trong container
 WORKDIR /app
