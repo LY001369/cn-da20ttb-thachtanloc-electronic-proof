@@ -1,4 +1,4 @@
-opencv-python==4.8.1.78
+opencv-python== 4.8.0.76
 patch_ng==1.17.4
 vietocr==0.3.12
 torch==2.1.0 --index-url https://download.pytorch.org/whl/cu118
